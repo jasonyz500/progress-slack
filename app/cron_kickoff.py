@@ -1,9 +1,7 @@
 import datetime
 import psycopg2
 import os
-import subprocess
 import sys
-from app import db
 from message_consts import *
 from slack_client import ProgressSlackClient
 
@@ -11,7 +9,7 @@ ACCESS_TOKEN = os.environ.get('SLACK_ACCESS_TOKEN')
 slack_client = ProgressSlackClient(ACCESS_TOKEN)
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
-def cron_kickoff(slack_user_id, team_id):
+def cron_kickoff(slack_user_id, team_id, ds):
     # get channel id
     channel_id = slack_client.get_im_channel_id(slack_user_id)
 
@@ -24,11 +22,11 @@ def cron_kickoff(slack_user_id, team_id):
     # update user's current question
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
-    cursor.execute("""
+    cur.execute("""
         update users 
-        set current_slack_question = 'mood_score' 
+        set current_slack_question = 'mood_score', slack_question_date_string = %s
         where slack_userid = %s and slack_teamid = %s""",
-        (slack_user_id, team_id))
+        (ds, slack_user_id, team_id))
     conn.commit()
 
     # send
@@ -39,5 +37,7 @@ def cron_kickoff(slack_user_id, team_id):
 if __name__ == "__main__":
     # only run on weekdays
     # todo: support multiple time zones
-    if ((datetime.datetime.today() - datetime.timedelta(hours=8)).weekday() <= 4 and len(sys.argv) == 3):
-        cron_kickoff(sys.argv[1], sys.argv[2])
+    dt = datetime.datetime.today() - datetime.timedelta(hours=8)
+    if len(sys.argv) == 3:
+        ds = dt.strftime('%Y-%m-%d')
+        cron_kickoff(sys.argv[1], sys.argv[2], ds)
