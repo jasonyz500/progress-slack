@@ -38,6 +38,6 @@ if __name__ == "__main__":
     # only run on weekdays
     # todo: support multiple time zones
     dt = datetime.datetime.today() - datetime.timedelta(hours=8)
-    if len(sys.argv) == 3:
+    if dt.weekday() <= 4 and len(sys.argv) == 3:
         ds = dt.strftime('%Y-%m-%d')
         cron_kickoff(sys.argv[1], sys.argv[2], ds)
