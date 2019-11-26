@@ -44,7 +44,7 @@ def parse_updates_and_tags(body):
     # returns a list of objects {update: '', tags: ['tag1', 'tag2']}
     res = []
     # update delimiter is newline
-    updates_strs = body.split('\n')
+    update_strs = body.split('\n')
     for update_str in update_strs:
         try:
             update_body, tags_str = update_str.strip().split('[')
