@@ -82,6 +82,8 @@ def save_to_db(user_id, current_question, ds, body):
         for update in updates:
             update_obj = DailyUpdate(user_id, entry_id, ds, update['update'])
             db.session.add(update_obj)
+            # auto populate next ID into update_obj
+            db.session.flush()
             for tag in update['tags']:
                 tag_obj = DailyTag(user_id, entry_id, update_obj.id, ds, tag)
                 db.session.add(tag_obj)
@@ -91,6 +93,8 @@ def save_to_db(user_id, current_question, ds, body):
         for update in updates:
             update_obj = WeeklyUpdate(user_id, ds, update['update'])
             db.session.add(update_obj)
+            # auto populate next ID into update_obj
+            db.session.flush()
             for tag in update['tags']:
                 tag_obj = WeeklyTag(user_id, update_obj.id, ds, tag)
                 db.session.add(tag_obj)
