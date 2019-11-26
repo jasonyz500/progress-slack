@@ -36,7 +36,7 @@ def handle_response(channel_id, slack_user_id, team_id, message):
     return
 
 
-def check_if_eow(user_id):
+def is_eow(user_id):
     return False
 
 
