@@ -10,6 +10,7 @@ class User(db.Model):
 	slack_name = db.Column(db.String)
 	current_slack_question = db.Column(db.String)
 	slack_question_date_string = db.Column(db.String)
+	slack_msg_cache = db.Column(db.Array)
 
 	@staticmethod
 	def get_by_id(user_id):

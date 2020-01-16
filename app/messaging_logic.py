@@ -8,10 +8,18 @@ ACCESS_TOKEN = os.environ.get('SLACK_ACCESS_TOKEN')
 slack_client = ProgressSlackClient(ACCESS_TOKEN)
 
 
-def handle_response(channel_id, slack_user_id, team_id, message):
+def handle_response(channel_id, slack_user_id, team_id, message, msg_id):
     user = User.get_by_slack_ids(slack_user_id, team_id)
+    # if the service is down, slack will repeatedly ping the endpoint
+    # with the same user message until it receives an ack
+    # so we need to dedupe based on msg_id here
     if not user:
         return
+
+    if msg_id in user.slack_msg_cache:
+        return
+    else:
+        user.slack_msg_cache.append(msg_id)
 
     # todo: abort if user has already filled out the entry
 
