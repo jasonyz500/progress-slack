@@ -16,7 +16,7 @@ def handle_response(channel_id, slack_user_id, team_id, message, msg_id):
     if not user:
         return
 
-    if msg_id in user.slack_msg_cache:
+    if user.slack_msg_cache and msg_id in user.slack_msg_cache:
         return
     else:
         user.slack_msg_cache.append(msg_id)
