@@ -29,6 +29,7 @@ def handle_event():
     team_id = event.get('team')
     message = event.get('text')
     msg_id = event.get('client_msg_id')
+    print('event: ', event)
     handle_response(channel_id, slack_user_id, team_id, message, msg_id)
     return 'Success'
 
